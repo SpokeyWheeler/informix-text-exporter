@@ -8,6 +8,10 @@ Add a cron job that runs every minute for /path/to/ifx-tf-exporter.sh
 Configuration File Layout:
 
 [metricname]
-HELP put your help line for metricname here
-TYPE 
+
+HELP put the help line for metricname here
+TYPE put the data type for metricname here
+DATABASE name of the database to run your SQL against here
+SQL select goes here
+
 [end of metricname]
