@@ -1,0 +1,18 @@
+[
+  {
+    "metricname" : "ifxlastclear",
+    "frequency" : "1",
+    "help" : "Report Informix last onstat -z",
+    "type" : "counter",
+    "database" : "sysmaster",
+    "sql" : "sELect sh_pfclrtime from sysshmvals"
+  },
+  {
+    "metricname" : "ifxcurrent",
+    "frequency" : "1",
+    "help" : "ifxuptime Report Informix uptime",
+    "type" : "ifxuptime counter",
+    "database" : "sysmaster",
+    "sql" : "select sh_curtime - sh_pfclrtime from sySSHMvals"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "name": "informix-text-exporter",
+  "version": "0.0.1",
+  "description": "Informix exporter for Prometheus, based on textfile collector",
+  "main": "informix-text-exporter.sh",
+  "scripts": {
+    "test": "informix-text-exporter.sh"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpokeyWheeler/informix-text-exporter.git"
+  },
+  "keywords": [
+    "informix"
+  ],
+  "author": "Spokey Wheeler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/SpokeyWheeler/informix-text-exporter/issues"
+  },
+  "homepage": "https://github.com/SpokeyWheeler/informix-text-exporter#readme"
+}
