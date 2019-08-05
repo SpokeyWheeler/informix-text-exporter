@@ -3,7 +3,7 @@ Prometheus Exporter for Informix that uses the Node Exporter Textfile Collector
 
 **Usage:**
 
-Add a cron job that runs every minute for `/path/to/ifx-text-exporter.sh`
+Add a cron job that runs every minute for `/path/to/informix-text-exporter.sh`
 
 The implementation of Prometheus and the Node Exporter is left as an exercise for the reader. :-)
 
