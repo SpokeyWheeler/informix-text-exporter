@@ -7,6 +7,11 @@ Add a cron job that runs every minute for `/path/to/ifx-text-exporter.sh`
 
 The implementation of Prometheus and the Node Exporter is left as an exercise for the reader. :-)
 
+Dependencies:
+ -  Prometheus
+ -  Node Exporter
+ -  jq
+
 **Configuration of the Exporter:**
 
 This file is called `ifx-text-exporter.config` and needs to be in the `informix-text-exporter` directory
