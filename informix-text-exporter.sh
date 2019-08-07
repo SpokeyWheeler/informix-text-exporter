@@ -4,10 +4,14 @@ nummetrics=$( cat informix-text-exporter.json | jq '. | length' )
 mins=$( date +M )
 cnt=0
 
+ls -l static_labels > /dev/null 2>&1
+sl_exists=$?
+
 > /tmp/informix-text-exporter.$$
 
 while [ "$cnt" -lt "$nummetrics" ]
 do
+	commas=0
 	frequency=$( cat informix-text-exporter.json | jq --argjson cnt "$cnt" '.[$cnt] | .frequency' | tr -d \" )
 	isnow=$(( mins % ( 60 / frequency ) ))
 
@@ -23,37 +27,59 @@ do
 		echo "# HELP $metricname $help" >> /tmp/informix-text-exporter.$$
 		echo "# TYPE $metricname $type" >> /tmp/informix-text-exporter.$$
 
-		newsql=$( echo $sql | tr "[:upper:]" "[:lower:]" )
-		commas=$( echo $newsql | grep -c "," )
-		if [ $(( $commas % 2 )) -ne 0 ]
-		then
-			echo "WARNING: label without value or vice-versa"
-			sleep 2
-		fi
+		newsql=$sql
+
 		for i in $newsql
 		do
-			if [ $commas -eq 0 ]
+			j=$( echo $i | tr "[:upper:]" "[:lower:]" )
+			if [ "x$j" == "xselect" ]
 			then
-				if [ "x$i" == "xselect" ]
+				sql="$i '${metricname}', "
+			else
+				if [ "x$j" == "xfrom" ]
 				then
-					sql="$i \"$metricname\", "
-				else
-					sql="$sql $i"
+					commas=$( echo $sql | while read i; do echo $i |grep -o ","| wc -l; done )
+					rmdr=$(( $commas % 2 ))
+					echo $commas
+					echo $rmdr
+					if [ $(( commas % 2 )) -ne 1 ]
+					then
+						echo "WARNING: label without value or vice-versa"
+					fi
+					sql="$sql, '|'"
 				fi
+				sql="$sql $i"
 			fi
 		done
 echo $sql 
 sleep 2
 		
-		dbaccess $database <<! 2> /dev/null | grep -v "^$" >> /tmp/informix-text-exporter.$$
+		dbaccess $database <<! | grep -v "^$" >> /tmp/informix-text-exporter.$$
 OUTPUT TO PIPE "cat" WITHOUT HEADINGS
 $sql
 !
+
+less /tmp/informix-text-exporter.$$
+
+		if [ $sl_exists -eq 0 ]
+		then
+			if [ -z static_labels ]
+			then
+				:
+			else
+				if [ $commas -eq 1 ]
+				then
+					sed -i -e "s/^${metricname}/$metricname{`cat static_labels`}/" /tmp/informix-text-exporter.$$
+				else
+					sed -i -e "s/^${metricname}/$metricname{`cat static_labels`/" /tmp/informix-text-exporter.$$
+				fi
+			fi
+		fi
 	# fi
 
 	cnt=$(( cnt + 1 ))
 done
 
 less /tmp/informix-text-exporter.$$
-rm /tmp/informix-text-exporter.$$
+# rm /tmp/informix-text-exporter.$$
 

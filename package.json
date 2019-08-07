@@ -3,6 +3,9 @@
   "version": "0.0.1",
   "description": "Informix exporter for Prometheus, based on textfile collector",
   "main": "informix-text-exporter.sh",
+  "dependencies": {
+    "jq": "1.6"
+  },
   "scripts": {
     "test": "informix-text-exporter.sh"
   },

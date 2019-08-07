@@ -8,6 +8,14 @@
     "sql" : "sELect sh_pfclrtime from sysshmvals"
   },
   {
+    "metricname" : "ifxnrows",
+    "frequency" : "1",
+    "help" : "Report row counts",
+    "type" : " gauge",
+    "database" : "stores7",
+    "sql" : "select 'tablename', tabname, nrows from systables where tabid > 99 and tabtype = 'T'"
+  },
+  {
     "metricname" : "ifxcurrent",
     "frequency" : "1",
     "help" : "ifxuptime Report Informix uptime",
