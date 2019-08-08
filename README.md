@@ -14,9 +14,7 @@ Dependencies:
 
 **Configuration of the Exporter:**
 
-This file is called `ifx-text-exporter.config` and needs to be in the `informix-text-exporter` directory
-
-`TEXTFILE_DIRECTORY /path/to/place/where/prometheus/looks/for/text/files/` (e.g. `TEXTFILE_DIRECTORY=/var/lib/node_exporter/textfile_collector/`)
+This JSON file is called `informix-text-exporter.config` and needs to be in the `informix-text-exporter` directory.
 
 **Static Labels:**
 

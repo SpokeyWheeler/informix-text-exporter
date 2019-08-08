@@ -1,0 +1,26 @@
+[
+  {
+    "metricname" : "ifxlastclear",
+    "frequency" : "1",
+    "help" : "Report Informix last onstat -z",
+    "type" : "counter",
+    "database" : "sysmaster",
+    "sql" : "sELect sh_pfclrtime from sysshmvals"
+  },
+  {
+    "metricname" : "ifxnrows",
+    "frequency" : "1",
+    "help" : "Report row counts",
+    "type" : " gauge",
+    "database" : "stores7",
+    "sql" : "select 'databasename', 'stores', 'tablename', tabname, nrows::int from systables where tabid > 99 and tabtype = 'T'"
+  },
+  {
+    "metricname" : "ifxcurrent",
+    "frequency" : "1",
+    "help" : "Report Informix uptime",
+    "type" : "counter",
+    "database" : "sysmaster",
+    "sql" : "select sh_curtime - sh_pfclrtime from sySSHMvals"
+  }
+]
