@@ -24,8 +24,8 @@ do
 	frequency=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .frequency' | tr -d \" )
 	isnow=$(( mins % ( 60 / frequency ) ))
 
-	# if [ "$isnow" -eq 0 ]
-	# then
+	if [ "$isnow" -eq 0 ]
+	then
 
 		metricname=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .metricname' | tr -d \" )
 		help=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .help' | tr -d \" )
@@ -116,7 +116,7 @@ $sql
 				fi
 			fi
 		fi
-	# fi
+	fi
 
 	cnt=$(( cnt + 1 ))
 done
