@@ -7,9 +7,5 @@ notifications:
     rooms:
     - zinaida:cS9FF04mRHHE6y1jGXXbpxRy#builds
 
-before_install:
-  - sudo apt-get install -y jsonlint
-
 script:
-  - jsonlint *.json
   - shellcheck *.sh
