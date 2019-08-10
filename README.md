@@ -14,7 +14,7 @@ Dependencies:
 
 **Configuration of the Exporter:**
 
-This JSON file is called `config.json` and needs to be in the `informix-text-exporter` directory. The content is a key value pair describing the path to the node exporter textfile collector directory.
+This JSON file is called `config.json` and needs to be in the `informix-text-exporter` directory. The content is a key-value pair describing the path to the node exporter textfile collector directory. The key is called `textfile_path` and the default path in Linux is `/var/lib/node_exporter/textfile_collector`.
 
 **Static Labels:**
 
