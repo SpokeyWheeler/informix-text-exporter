@@ -1,23 +1,22 @@
 #!/bin/bash
 
-nummetrics=$( cat metrics.json | jq '. | length' )
+nummetrics=$( jq '. | length' < metrics.json  )
 mins=$( date +%M )
-echo $mins
 cnt=0
 
 while [ "$cnt" -lt "$nummetrics" ]
 do
-	frequency=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .frequency' | tr -d \" )
+	frequency=$( jq --argjson cnt "$cnt" '.[$cnt] | .frequency' < metrics.json | tr -d \" )
 	isnow=$(( mins % ( 60 / frequency ) ))
 
 	if [ "$isnow" -eq 0 ]
 	then
-		if [ -f ./${frequency}.lock ]
+		if [ -f "./${frequency}.lock" ]
 		then
 			:
 		else
-			./informix-text-exporter.sh $frequency &
-			> ${frequency}.lock
+			./informix-text-exporter.sh "$frequency" &
+			touch "${frequency}.lock"
 		fi
 	fi
 
