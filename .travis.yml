@@ -1,3 +1,5 @@
+language: generic
+
 dist: xenial
 
 notifications:
@@ -8,14 +10,6 @@ notifications:
 before_install:
   - sudo apt-get install -y jsonlint
 
-jobs:
-  include:
-    - env: task=json-lint
-      install: npm install jsonlint
-      script:
-        - npm run jsonlint
-      language: generic
-    - env: task=ShellCheck
-      script:
-        - shellcheck *.sh
-      language: generic
+script:
+  - jsonlint *.json
+  - shellcheck *.sh
