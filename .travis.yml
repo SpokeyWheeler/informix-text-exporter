@@ -7,4 +7,6 @@ notifications:
     rooms:
     - zinaida:cS9FF04mRHHE6y1jGXXbpxRy#builds
 
-script: ${TRAVIS_BUILD_DIR}/scripts/run-tests.sh
+script:
+  - shellcheck *.sh
+  - jsonlint *.json *.json.sample
