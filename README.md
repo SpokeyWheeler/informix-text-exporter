@@ -3,7 +3,7 @@ Prometheus Exporter for Informix that uses the Node Exporter Textfile Collector
 
 **Usage:**
 
-Add a cron job that runs every minute for `/path/to/informix-text-exporter.sh`
+Add a cron job that runs every minute for `/path/to/informix-text-runner.sh`
 
 The implementation of Prometheus and the Node Exporter is left as an exercise for the reader. :-)
 
@@ -14,7 +14,7 @@ Dependencies:
 
 **Configuration of the Exporter:**
 
-This JSON file is called `informix-text-exporter.config` and needs to be in the `informix-text-exporter` directory.
+This JSON file is called `config.json` and needs to be in the `informix-text-exporter` directory. The content is a key value pair describing the path to the node exporter textfile collector directory.
 
 **Static Labels:**
 
