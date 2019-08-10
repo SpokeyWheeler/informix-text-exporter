@@ -2,10 +2,33 @@
 
 starttime=$( date +%s%3N )
 
+if [ $# -ne 1 ]
+then
+	echo "
+Usage: $0 frequency
+
+Frequency is an integer number showing the number of times per hour to execute a query or queries.
+Valid values are: 1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30 and 60. Any other value will be ignored.
+"
+	exit 1
+fi
+
+frq=$1
+
+case $frq in
+	1|2|3|4|5|6|10|12|15|20|30|60)
+		:
+			;;
+	*)
+		echo "Invalid frequency: $frq"
+		rm ${frq}.lock 2> /dev/null
+		exit 2
+			;;
+esac
+
 textfile_path=$( cat informix-text-exporter.config | jq '.[] | .textfile_path' | tr -d \" )
 
 nummetrics=$( cat metrics.json | jq '. | length' )
-mins=$( date +M )
 cnt=0
 
 ls -l static_labels > /dev/null 2>&1
@@ -22,9 +45,8 @@ while [ "$cnt" -lt "$nummetrics" ]
 do
 	commas=0
 	frequency=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .frequency' | tr -d \" )
-	isnow=$(( mins % ( 60 / frequency ) ))
 
-	if [ "$isnow" -eq 0 ]
+	if [ "$frequency" -eq "$frq" ]
 	then
 
 		metricname=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .metricname' | tr -d \" )
@@ -33,8 +55,8 @@ do
 		database=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .database' | tr -d \" )
 		sql=$( cat metrics.json | jq --argjson cnt "$cnt" '.[$cnt] | .sql' | tr -d \" )
 
-		echo "# HELP $metricname $help" >> /tmp/informix-text-exporter.$$
-		echo "# TYPE $metricname $type" >> /tmp/informix-text-exporter.$$
+		echo "# HELP $metricname $help" >> /tmp/informix-text-exporter.$frq.$$
+		echo "# TYPE $metricname $type" >> /tmp/informix-text-exporter.$frq.$$
 
 		origsql=$sql
 		newsql=$sql
@@ -84,7 +106,7 @@ do
 		
 		if [ $commas -eq 1 ]
 		then
-			dbaccess $database <<! 2> /dev/null | grep -v "^$" >> /tmp/informix-text-exporter.$$
+			dbaccess $database <<! 2> /dev/null | grep -v "^$" >> /tmp/informix-text-exporter.$frq.$$
 OUTPUT TO PIPE "cat" WITHOUT HEADINGS
 $sql
 !
@@ -96,7 +118,7 @@ $sql
 				pst="$pst -"
 				ccnt=$(( ccnt + 1 ))
 			done
-			dbaccess $database <<! 2> /dev/null | grep -v "^$" | eval $pst >> /tmp/informix-text-exporter.$$
+			dbaccess $database <<! 2> /dev/null | grep -v "^$" | eval $pst >> /tmp/informix-text-exporter.$frq.$$
 OUTPUT TO PIPE "cat" WITHOUT HEADINGS
 $sql
 !
@@ -110,9 +132,9 @@ $sql
 			else
 				if [ $commas -eq 1 ]
 				then
-					sed -i -e "s/^${metricname}/$metricname{$statics\"}/" /tmp/informix-text-exporter.$$
+					sed -i -e "s/^${metricname}/$metricname{$statics\"}/" /tmp/informix-text-exporter.$frq.$$
 				else
-					sed -i -e "s/^${metricname}/$metricname{$statics/" /tmp/informix-text-exporter.$$
+					sed -i -e "s/^${metricname}/$metricname{$statics/" /tmp/informix-text-exporter.$frq.$$
 				fi
 			fi
 		fi
@@ -120,17 +142,19 @@ $sql
 
 	cnt=$(( cnt + 1 ))
 done
-sed -i -e 's/} ="/"} /' /tmp/informix-text-exporter.$$
-sed -i -e 's/,}=/"} /' /tmp/informix-text-exporter.$$
+sed -i -e 's/} ="/"} /' /tmp/informix-text-exporter.$frq.$$
+sed -i -e 's/,}=/"} /' /tmp/informix-text-exporter.$frq.$$
 
-echo "# HELP informix_exporter_duration How long the Informix exporter takes to run in milliseconds" >> /tmp/informix-text-exporter.$$
-echo "# TYPE informix_exporter_duration gauge" >> /tmp/informix-text-exporter.$$
+echo "# HELP informix_exporter_duration How long the Informix exporter takes to run in milliseconds" >> /tmp/informix-text-exporter.$frq.$$
+echo "# TYPE informix_exporter_duration gauge" >> /tmp/informix-text-exporter.$frq.$$
 
 endtime=$( date +%s%3N )
 dur=$(( endtime - starttime ))
 
-echo "informix_exporter_duration{$statics\"} $dur" >> /tmp/informix-text-exporter.$$
-sed -i -e 's/,/",/g' /tmp/informix-text-exporter.$$
-sed -i -e 's/=/="/g' /tmp/informix-text-exporter.$$
+echo "informix_exporter_duration{$statics,frequency=$frq\"} $dur" >> /tmp/informix-text-exporter.$frq.$$
+sed -i -e 's/,/",/g' /tmp/informix-text-exporter.$frq.$$
+sed -i -e 's/=/="/g' /tmp/informix-text-exporter.$frq.$$
 
-mv /tmp/informix-text-exporter.$$ $textfile_path/informix-text-exporter.prom
+mv /tmp/informix-text-exporter.$frq.$$ $textfile_path/informix-text-exporter.$frq.prom
+rm ${frq}.lock 2> /dev/null
+exit 0

@@ -1,7 +1,7 @@
 [
   {
     "metricname" : "ifxlastclear",
-    "frequency" : "1",
+    "frequency" : "60",
     "help" : "Report Informix last onstat -z",
     "type" : "counter",
     "database" : "sysmaster",
@@ -9,7 +9,7 @@
   },
   {
     "metricname" : "ifxnrows",
-    "frequency" : "1",
+    "frequency" : "30",
     "help" : "Report row counts",
     "type" : " gauge",
     "database" : "stores7",
@@ -17,10 +17,10 @@
   },
   {
     "metricname" : "ifxcurrent",
-    "frequency" : "1",
+    "frequency" : "60",
     "help" : "Report Informix uptime",
     "type" : "counter",
     "database" : "sysmaster",
-    "sql" : "select sh_curtime - sh_pfclrtime from sySSHMvals"
+    "sql" : "select sh_curtime from sySSHMvals"
   }
 ]
