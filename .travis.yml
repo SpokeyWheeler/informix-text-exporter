@@ -5,6 +5,9 @@ notifications:
     rooms:
     - zinaida:cS9FF04mRHHE6y1jGXXbpxRy#builds
 
+before_install:
+  - sudo apt-get install -y jsonlint
+
 jobs:
   include:
     - env: task=json-lint
