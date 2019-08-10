@@ -7,12 +7,12 @@ notifications:
 
 jobs:
   include:
-    - env: task=ShellCheck
-      script:
-        - shellcheck *.sh
-      language: generic
     - env: task=json-lint
       install: npm install jsonlint
       script:
         - npm run jsonlint
+      language: generic
+    - env: task=ShellCheck
+      script:
+        - shellcheck *.sh
       language: generic
