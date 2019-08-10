@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 nummetrics=$( cat metrics.json | jq '. | length' )
 mins=$( date +%M )
