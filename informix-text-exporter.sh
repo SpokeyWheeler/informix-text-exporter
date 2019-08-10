@@ -26,7 +26,7 @@ case $frq in
 			;;
 esac
 
-textfile_path=$( cat informix-text-exporter.config | jq '.[] | .textfile_path' | tr -d \" )
+textfile_path=$( cat config.json | jq '.[] | .textfile_path' | tr -d \" )
 
 nummetrics=$( cat metrics.json | jq '. | length' )
 cnt=0
