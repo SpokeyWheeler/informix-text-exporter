@@ -1,5 +1,3 @@
-language: shell
-
 dist: xenial
 
 notifications:
@@ -7,6 +5,14 @@ notifications:
     rooms:
     - zinaida:cS9FF04mRHHE6y1jGXXbpxRy#builds
 
-script:
-  - shellcheck *.sh
-  - jsonlint *.json *.json.sample
+jobs:
+  include:
+    - env: task=ShellCheck
+      script:
+        - shellcheck *.sh
+      language: generic
+    - env: task=json-lint
+      install: npm install jsonlint
+      script:
+        - npm run jsonlint
+      language: generic
