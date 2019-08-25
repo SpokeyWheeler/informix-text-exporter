@@ -23,4 +23,4 @@
     "database" : "sysmaster",
     "sql" : "select sh_curtime - sh_pfclrtime from sySSHMvals"
   }
-]
+];
