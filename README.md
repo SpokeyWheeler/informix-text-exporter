@@ -8,9 +8,9 @@ Add a cron job that runs every minute for `/path/to/informix-text-runner.sh`
 The implementation of Prometheus and the Node Exporter is left as an exercise for the reader. :-)
 
 Dependencies:
-  * Prometheus.
-  * Node Exporter
-  * jq
+* Prometheus
+* Node Exporter
+* jq
 
 ## Configuration of the Exporter
 
