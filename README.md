@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/SpokeyWheeler/informix-text-exporter.svg?branch=master)](https://travis-ci.com/SpokeyWheeler/informix-text-exporter) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ec2e7836d9434c20ba62b4930e866f94)](https://www.codacy.com/manual/Zinaida/informix-text-exporter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SpokeyWheeler/informix-text-exporter&amp;utm_campaign=Badge_Grade) [![CodeFactor](https://www.codefactor.io/repository/github/spokeywheeler/informix-text-exporter/badge)](https://www.codefactor.io/repository/github/spokeywheeler/informix-text-exporter)
+
 # informix-text-exporter
 Prometheus Exporter for Informix that uses the Node Exporter Textfile Collector
 
