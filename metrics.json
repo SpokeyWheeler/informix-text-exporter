@@ -1,11 +1,19 @@
 [
   {
+    "metricname" : "ifxbufwrites",
+    "frequency" : "60",
+    "help" : "Report number of bufwrites",
+    "type" : "counter",
+    "database" : "sysmaster",
+    "sql" : "select 'buffersize', bufsize, bufwrites::int8 from sysbufpool"
+  },
+  {
     "metricname" : "ifxlastclear",
     "frequency" : "60",
     "help" : "Report Informix last onstat -z",
     "type" : "counter",
     "database" : "sysmaster",
-    "sql" : "sELect sh_pfclrtime from sysshmvals"
+    "sql" : "select sh_pfclrtime from sysshmvals"
   },
   {
     "metricname" : "ifxnrows",
@@ -21,6 +29,6 @@
     "help" : "Report Informix uptime",
     "type" : "counter",
     "database" : "sysmaster",
-    "sql" : "select sh_curtime from sySSHMvals"
+    "sql" : "select sh_curtime from sysshmvals"
   }
-]
+];

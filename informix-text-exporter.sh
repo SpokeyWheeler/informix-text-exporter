@@ -39,7 +39,7 @@ then
 	statics=$( cat static_labels )
 fi
 
-cat / dev/null > "/tmp/informix-text-exporter.$frq.$$"
+cat /dev/null > "/tmp/informix-text-exporter.$frq.$$"
 
 while [ "$cnt" -lt "$nummetrics" ]
 do
@@ -63,6 +63,7 @@ do
 
 		for i in $newsql
 		do
+sleep 1
 			j=$( echo "$i" | tr "[:upper:]" "[:lower:]" )
 			if [ "x$j" == "xselect" ]
 			then
@@ -86,6 +87,7 @@ do
 		ccnt=0
 		for i in $newsql
 		do
+sleep 1
 			j=$( echo "$i" | tr "[:upper:]" "[:lower:]" )
 			if [ "x$j" == "xselect" ]
 			then
@@ -107,19 +109,21 @@ do
 		
 		if [ "$commas" -eq 1 ]
 		then
-			dbaccess "$database" <<! 2> /dev/null | grep -v "^$" >> "/tmp/informix-text-exporter.$frq.$$"
+			dbaccess "$database" <<! 2> /dev/null | grep -v "^$" | tr -s "[:space:]" "[:space:]">> "/tmp/informix-text-exporter.$frq.$$"
 OUTPUT TO PIPE "cat" WITHOUT HEADINGS
 $sql
 !
 		else
 			pst='paste -d ,= -'
 			ccnt=0
-			while [ "$ccnt" -le "$commas" ]
+			while [ "$ccnt" -lt "$commas" ]
 			do
+sleep 1
 				pst="$pst -"
 				ccnt=$(( ccnt + 1 ))
 			done
-			dbaccess "$database" <<! 2> /dev/null | grep -v "^$" | eval "$pst" >> "/tmp/informix-text-exporter.$frq.$$"
+echo $sql
+			dbaccess "$database" <<! 2> /dev/null | grep -v "^$" | tr -s | eval "$pst"| tr -s "[:space:]" "[:space:]">> "/tmp/informix-text-exporter.$frq.$$"
 OUTPUT TO PIPE "cat" WITHOUT HEADINGS
 $sql
 !
@@ -140,6 +144,7 @@ $sql
 	fi
 
 	cnt=$(( cnt + 1 ))
+exit
 done
 sed -i -e 's/} ="/"} /' "/tmp/informix-text-exporter.$frq.$$"
 sed -i -e 's/,}=/"} /' "/tmp/informix-text-exporter.$frq.$$"
