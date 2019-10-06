@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nummetrics=$( jq '. | length' < metrics.json  )
+nummetrics=$( jq '. | length' < metrics.json )
 mins=$( date +%M )
 cnt=0
 
