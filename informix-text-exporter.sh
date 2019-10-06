@@ -122,7 +122,7 @@ sleep 1
 				pst="$pst -"
 				ccnt=$(( ccnt + 1 ))
 			done
-echo $sql
+echo "$sql"
 			dbaccess "$database" <<! 2> /dev/null | grep -v "^$" | tr -s | eval "$pst"| tr -s "[:space:]" "[:space:]">> "/tmp/informix-text-exporter.$frq.$$"
 OUTPUT TO PIPE "cat" WITHOUT HEADINGS
 $sql
