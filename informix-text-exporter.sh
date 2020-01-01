@@ -98,7 +98,7 @@ UNLOAD TO /tmp/informix-text-exporter.tmp.$frq.$$
 $sql
 !
 		sed -i -e "s/|$//" "/tmp/informix-text-exporter.tmp.$frq.$$"
-		if [ $commas -ne 0 ]
+		if [ "$commas" -ne 0 ]
 		then
 			sed -i -e "s/|/\"} /$commas" "/tmp/informix-text-exporter.tmp.$frq.$$"
 		fi
@@ -113,7 +113,7 @@ $sql
 			fi
 		done
 
-		if [ $sl_exists -eq 0 ]
+		if [ "$sl_exists" -eq 0 ]
 		then
 			if [ -s static_labels ]
 			then
