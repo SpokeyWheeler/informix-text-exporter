@@ -97,6 +97,10 @@ do
 UNLOAD TO /tmp/informix-text-exporter.tmp.$frq.$$
 $sql
 !
+		if [ $? -ne 0 ]
+		then
+			echo "Failed: $sql"
+		fi
 		sed -i -e "s/|$//" "/tmp/informix-text-exporter.tmp.$frq.$$"
 		if [ "$commas" -ne 0 ]
 		then
