@@ -1,26 +1,586 @@
 [
   {
-    "metricname" : "ifxlastclear",
-    "frequency" : "1",
-    "help" : "Report Informix last onstat -z",
-    "type" : "counter",
     "database" : "sysmaster",
-    "sql" : "sELect sh_pfclrtime from sysshmvals"
+    "metricname" : "ifxreplication_lag_last_update_seconds",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Timestamp of last lag update",
+    "sql" : "SELECT 'secondary', lt_secondary, lt_lagtime_1 FROM sysha_lagtime"
   },
   {
-    "metricname" : "ifxnrows",
-    "frequency" : "1",
-    "help" : "Report row counts",
-    "type" : " gauge",
-    "database" : "stores7",
-    "sql" : "select 'databasename', 'stores', 'tablename', tabname, nrows::int from systables where tabid > 99 and tabtype = 'T'"
+    "database" : "sysmaster",
+    "metricname" : "ifxreplication_lag_lagtime_seconds",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Replication lag in seconds",
+    "sql" : "SELECT 'secondary', lt_secondary, lt_lagtime_1 FROM sysha_lagtime"
   },
   {
-    "metricname" : "ifxcurrent",
-    "frequency" : "1",
-    "help" : "Report Informix uptime",
-    "type" : "counter",
     "database" : "sysmaster",
-    "sql" : "select sh_curtime - sh_pfclrtime from sySSHMvals"
+    "metricname" : "ifxread_pages_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total number of pages read",
+    "sql" : "SELECT 'chunk', chknum, pagesread FROM syschktab c, sysdbstab d WHERE c.dbsnum = d.dbsnum"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxwrite_pages_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total number of pages written",
+    "sql" : "SELECT 'chunk', chknum, pageswritten FROM syschktab c, sysdbstab d WHERE c.dbsnum = d.dbsnum"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxread_seconds_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total time taken for reads",
+    "sql" : "SELECT 'chunk', chknum, readtime FROM syschktab c, sysdbstab d WHERE c.dbsnum = d.dbsnum"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxwrite_seconds_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total time taken for writes",
+    "sql" : "SELECT 'chunk', chknum, writetime FROM syschktab c, sysdbstab d WHERE c.dbsnum = d.dbsnum"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxdbspace_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "DB space size",
+    "sql" : "SELECT 'dbspace', name, 'state', 'used', SUM(chksize) - SUM(nfree) FROM sysdbspaces d, syschunks c WHERE d.dbsnum = c.dbsnum GROUP BY 1, 2, 3, 4 UNION SELECT 'dbspace', name, 'state', 'free', SUM(nfree) FROM sysdbspaces d, syschunks c WHERE d.dbsnum = c.dbsnum GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxbuffers_allocated",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "number of buffers allocated",
+    "sql" : "SELECT 'bufsize', bufsize, nbuffs FROM sysbufpool"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxsequential_scans_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total sequential scans",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'seqscans'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxsorts_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total sorts",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'totalsorts'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxmemory_sorts_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total memory sorts",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'memsorts'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxdisk_sorts_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total disk sorts",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'disksorts'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxmax_sorts_space_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Max sorts space",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'maxsortspace'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxbuffer_transaction_commits_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total transaction commits",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'iscommits'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxbuffer_waits_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total buffer waits",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'buffwts'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxcheckpoints_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total check points",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'ckptwts'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxlock_requests_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total lock requests",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'lockreqs'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxlock_waits_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total lock waits",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'lockwts'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxdead_locks_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total deadlocks",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'deadlks'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxforeground_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total foreground writes",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'fgwrites'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxlruwrites_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Least recently used (LRU) writes",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'lruwrites'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxchunk_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total chunk writes",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'chunkwrites'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxdisk_reads_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total disk reads",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'dskreads'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxbuffer_reads_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total buffer reads",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'bufreads'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxdisk_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total disk writes",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'dskwrites'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxbuffer_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total buffer writes",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'bufwrites'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxlatch_waits_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Total latch waits",
+    "sql" : "SELECT value FROM sysprofile WHERE name = 'latchwts'"
+  },
+  {
+     "database" : "sysmaster",
+     "metricname" : "ifxbuffer_pool_disk_reads_pages_total",
+     "frequency" : "60",
+     "type" : "counter",
+     "help" : "Total buffer pool disk reads",
+     "sql" : "SELECT 'buffersize', bufsize, dskreads FROM sysbufpool"
+  },
+  {
+     "database" : "sysmaster",
+     "metricname" : "ifxbuffer_pool_page_reads_pages_total",
+     "frequency" : "60",
+     "type" : "counter",
+     "help" : "Total buffer pool page reads",
+     "sql" : "SELECT 'buffersize', bufsize, pagreads FROM sysbufpool"
+  },
+  {
+     "database" : "sysmaster",
+     "metricname" : "ifxbuffer_pool_disk_writes_pages_total",
+     "frequency" : "60",
+     "type" : "counter",
+     "help" : "Total buffer pool disk writes",
+     "sql" : "SELECT 'buffersize', bufsize, dskwrites FROM sysbufpool"
+  },
+  {
+     "database" : "sysmaster",
+     "metricname" : "ifxbuffer_pool_page_writes_pages_total",
+     "frequency" : "60",
+     "type" : "counter",
+     "help" : "Total buffer pool page writes",
+     "sql" : "SELECT 'buffersize', bufsize, pagwrites FROM sysbufpool"
+  },
+  {
+     "database" : "sysmaster",
+     "metricname" : "ifxbuffer_pool_buffer_waits_pages_total",
+     "frequency" : "60",
+     "type" : "counter",
+     "help" : "Total buffer pool buffer waits",
+     "sql" : "SELECT 'buffersize', bufsize, bufwaits FROM sysbufpool"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxlocks",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Informix locks",
+    "sql" : "SELECT 'waiter', '0', COUNT(*) FROM syslocks WHERE waiter IS NULL AND dbsname != 'sysmaster' AND tabname != 'sysdatabases' UNION SELECT 'waiter', '1', COUNT(*) FROM syslocks WHERE waiter IS NOT NULL AND dbsname != 'sysmaster' AND tabname != 'sysdatabases'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_segment_profile_segments",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Profile segments",
+    "sql" : "SELECT COUNT(*) FROM sysseglst WHERE seg_class = 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_segment_profile_virtual_used_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Virtual segment bytes used",
+    "sql" : "SELECT SUM(seg_blkused) * 4096 FROM sysseglst WHERE seg_class = 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_segment_profile_vp_cache_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Virtual cached bytes",
+    "sql" : "SELECT SUM(vp_cache_size) * 4096 FROM sysvplst"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_segment_profile_total_pool_size_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Virtual total pool size",
+    "sql" : "SELECT SUM(po_usedamt) FROM syspools WHERE po_class = 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_segment_profile_pool_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "dictpool pool size",
+    "sql" : "SELECT 'poolname', po_name, SUM(po_usedamt) FROM syspools WHERE po_class = 2 AND po_name IN ('dictpool', 'global', 'mt', 'rsam', 'aio', 'dstpool', 'procpool') GROUP BY 1, 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_processor_details_idle",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Idle details",
+    "sql" : "SELECT 'class', classname, COUNT(*) - SUM(num_ready) FROM sysvplst GROUP BY 1, 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_processor_details_ready",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Ready details",
+    "sql" : "SELECT 'class', classname, SUM(num_ready) FROM sysvplst GROUP BY 1, 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_processor_details_semops",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Semops details",
+    "sql" : "SELECT 'class', classname, SUM(total_semops) FROM sysvplst GROUP BY 1, 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_processor_details_busy_waits",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Busy waits details",
+    "sql" : "SELECT 'class', classname, SUM(total_busy_wts) FROM sysvplst GROUP BY 1, 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_processor_details_spins",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Spins details",
+    "sql" : "SELECT 'class', classname, SUM(total_spins) FROM sysvplst GROUP BY 1, 2"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxvirtual_processor_activity_cpu",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Virtual CPU activity",
+    "sql" : "SELECT 'state', 'user', 'class', class, SUM(usercpu) FROM sysvpprof GROUP BY 1, 2, 3, 4 UNION SELECT 'state', 'system', 'class', class, SUM(syscpu) FROM sysvpprof GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxuptime_curtime_seconds_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Informix DB current time",
+    "sql" : "SELECT sh_curtime FROM sysshmvals"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxuptime_boottime_seconds_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Last Informix Engine Boot time",
+    "sql" : "SELECT sh_boottime FROM sysshmvals"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxuptime_pfclrtime_seconds_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Last time onstat -z was executed",
+    "sql" : "SELECT sh_pfclrtime FROM sysshmvals"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_row_size_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table row size",
+    "sql" : "SELECT UNIQUE 'database', a.dbsname, 'table', a.tabname, b.ti_rowsize FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_columns",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of columns",
+    "sql" : "SELECT UNIQUE 'database', a.dbsname, 'table', a.tabname, b.ti_ncols FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_indexes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of indexes",
+    "sql" : "SELECT UNIQUE 'database', a.dbsname, 'table', a.tabname, b.ti_nkeys FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_extents",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of extents",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, SUM(b.ti_nextns) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_page_size_bytes",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table page size",
+    "sql" : "SELECT UNIQUE 'database', a.dbsname, 'table', a.tabname, b.ti_pagesize FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_pages",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of pages",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, SUM(b.ti_nptotal) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_used_pages",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of used pages",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, SUM(b.ti_npused) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_data_pages",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of data pages",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, SUM(b.ti_npdata) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_free_pages",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of free pages",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, SUM(b.ti_nptotal - b.ti_npused) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_rows",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of rows",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, SUM(b.ti_nrows) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_rows_per_page",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of rows per page",
+    "sql" : "SELECT UNIQUE 'database', a.dbsname, 'table', a.tabname, CASE WHEN b.ti_rowsize > 0 THEN TRUNC((b.ti_pagesize - 24) / b.ti_rowsize) ELSE 0 END CASE FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_free_rows",
+    "frequency" : "60",
+    "type" : "gauge",
+    "help" : "Table number of free rows",
+    "sql" : "SELECT UNIQUE 'database', a.dbsname, 'table', a.tabname, CASE WHEN b.ti_rowsize > 0 THEN TRUNC((b.ti_pagesize - 24) / b.ti_rowsize) * (b.ti_nptotal - b.ti_npused) ELSE 0 END CASE FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*'"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_statistics_created_seconds",
+    "frequency" : "60",
+    "type" : "untyped",
+    "help" : "Table creation date",
+    "sql" : "SELECT 'database', a.dbsname, 'table', a.tabname, MIN(b.ti_created) FROM systabnames a, systabinfo b WHERE b.ti_partnum = a.partnum AND a.dbsname NOT MATCHES 'sys*' AND a.dbsname NOT MATCHES 'sb*' AND a.dbsname NOT MATCHES 'tmp*' AND b.ti_npdata > 0 AND a.tabname NOT MATCHES 'sys*' GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_lock_requests_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of lock requests",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(lockreqs)  FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_lock_waits_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of lock waits",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(lockwts)  FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_deadlocks_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of deadlocks",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(deadlks) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_deadlock_timeouts_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of deadlock timeouts",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(lktouts) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_reads_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of reads",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(isreads) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of writes",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(iswrites) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_rewrites_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of rewrites",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(isrewrites) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_deletes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of deletes",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(isdeletes) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_buffer_reads_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of buffer reads",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(bufreads) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_buffer_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of buffer writes",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(bufwrites) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_sequential_scans_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of sequential scans",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(seqscans) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_page_reads_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of page reads",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(pagreads) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
+  },
+  {
+    "database" : "sysmaster",
+    "metricname" : "ifxtable_operations_page_writes_total",
+    "frequency" : "60",
+    "type" : "counter",
+    "help" : "Table number of page writes",
+    "sql" : "SELECT 'database', dbsname, 'table', tabname, SUM(pagwrites) FROM systabinfo b, sysptprof c WHERE b.ti_partnum = c.partnum AND dbsname NOT MATCHES 'sys*' AND dbsname NOT MATCHES 'sb*' AND dbsname NOT MATCHES 'tmp*' AND tabname NOT MATCHES 'sys*' AND b.ti_npdata > 0 GROUP BY 1, 2, 3, 4"
   }
-];
+]
