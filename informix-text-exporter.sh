@@ -97,9 +97,15 @@ do
 UNLOAD TO /tmp/informix-text-exporter.tmp.$frq.$$
 $sql
 !
-		if [ $? -ne 0 ]
+		# if [ $( wc -l /tmp/informix-text-exporter.tmp.$frq.$$ | awk '{print $1}'  ) -eq 0 ]
+		if [ -s /tmp/informix-text-exporter.tmp.$frq.$$ ]
 		then
+			# echo "OK: $sql"
+			:
+		else
 			echo "Failed: $sql"
+			cnt=$(( cnt + 1 ))
+			continue
 		fi
 		sed -i -e "s/|$//" "/tmp/informix-text-exporter.tmp.$frq.$$"
 		if [ "$commas" -ne 0 ]
@@ -147,6 +153,13 @@ dur=$(( endtime - starttime ))
 echo "informix_exporter_duration{$statics,frequency=$frq\"} $dur" >> "/tmp/informix-text-exporter.$frq.$$"
 sed -i -e 's/,/",/g' "/tmp/informix-text-exporter.$frq.$$"
 sed -i -e 's/=/="/g' "/tmp/informix-text-exporter.$frq.$$"
+
+if cat "/tmp/informix-text-exporter.$frq.$$" | promtool check metrics > /tmp/metrics.lint.err 2>&1
+then
+	:
+else
+	echo "Prometheus linting error(s). Check /tmp/metrics.lint.err for details"
+fi	
 
 mv "/tmp/informix-text-exporter.$frq.$$" "$textfile_path/informix-text-exporter.$frq.prom"
 rm "${frq}.lock" 2> /dev/null
