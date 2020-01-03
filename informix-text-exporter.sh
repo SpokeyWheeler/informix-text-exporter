@@ -98,7 +98,7 @@ UNLOAD TO /tmp/informix-text-exporter.tmp.$frq.$$
 $sql
 !
 		# if [ $( wc -l /tmp/informix-text-exporter.tmp.$frq.$$ | awk '{print $1}'  ) -eq 0 ]
-		if [ -s /tmp/informix-text-exporter.tmp.$frq.$$ ]
+		if [ -s "/tmp/informix-text-exporter.tmp.$frq.$$" ]
 		then
 			# echo "OK: $sql"
 			:
@@ -154,7 +154,7 @@ echo "informix_exporter_duration{$statics,frequency=$frq\"} $dur" >> "/tmp/infor
 sed -i -e 's/,/",/g' "/tmp/informix-text-exporter.$frq.$$"
 sed -i -e 's/=/="/g' "/tmp/informix-text-exporter.$frq.$$"
 
-if cat "/tmp/informix-text-exporter.$frq.$$" | promtool check metrics > /tmp/metrics.lint.err 2>&1
+if promtool check metrics < "/tmp/informix-text-exporter.$frq.$$" > /tmp/metrics.lint.err 2>&1
 then
 	:
 else
