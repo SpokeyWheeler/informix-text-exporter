@@ -18,6 +18,7 @@ Dependencies:
 * Prometheus
 * Node Exporter
 * jq
+* CSDK 😕
 
 ## Configuration of the Exporter
 
