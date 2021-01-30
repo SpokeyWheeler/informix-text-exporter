@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.com/SpokeyWheeler/informix-text-exporter.svg?branch=master)](https://travis-ci.com/SpokeyWheeler/informix-text-exporter)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ec2e7836d9434c20ba62b4930e866f94)](https://www.codacy.com/manual/Zinaida/informix-text-exporter?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SpokeyWheeler/informix-text-exporter&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/4aa4d0c7e27844268b58b30939333f77)](https://www.codacy.com/gh/SpokeyWheeler/informix-text-exporter/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=SpokeyWheeler/informix-text-exporter&amp;utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/spokeywheeler/informix-text-exporter/badge)](https://www.codefactor.io/repository/github/spokeywheeler/informix-text-exporter)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FSpokeyWheeler%2Finformix-text-exporter.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FSpokeyWheeler%2Finformix-text-exporter?ref=badge_shield)
 
